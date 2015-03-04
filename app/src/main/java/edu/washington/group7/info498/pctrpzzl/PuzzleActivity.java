@@ -1,9 +1,17 @@
 package edu.washington.group7.info498.pctrpzzl;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 
 public class PuzzleActivity extends ActionBarActivity {
@@ -12,6 +20,24 @@ public class PuzzleActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_puzzle);
+
+        ImageView imageView = (ImageView) findViewById(R.id.imageView);
+
+        InputStream bitmap = null;
+
+        try {
+            bitmap = getAssets().open("background.png");
+            Bitmap bit = BitmapFactory.decodeStream(bitmap);
+            imageView.setImageBitmap(bit);
+        } catch (IOException e) {
+            Log.e("PuzzleActivity", "SOMETHING SOMETHING IO EXCEPTION");
+        } finally {
+            try {
+                bitmap.close();
+            } catch (IOException e) {
+                Log.wtf("PuzzleActivity", "wtf");
+            }
+        }
     }
 
 
