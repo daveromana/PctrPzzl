@@ -19,7 +19,6 @@ public class PuzzleManager {
     private int emptyCol;
     private int rowsCols;
     private int emptyId;
-    //private Map<Bitmap, Integer> gameboard;
     private Bitmap[] gameboard;
 
     private static PuzzleManager instance = null;
@@ -31,6 +30,7 @@ public class PuzzleManager {
         emptyId = 15;
     }
 
+    // singleton
     public static PuzzleManager getInstance() {
         if (instance == null) {
             instance = new PuzzleManager();
@@ -38,10 +38,12 @@ public class PuzzleManager {
         return instance;
     }
 
+    // set the ID when we need to later on
     public void setEmptyId(int newId) {
         emptyId = newId;
     }
 
+    // TODO
     public void shuffle() {
         for (int i = 0; i < 1000; i++) {
             int[] possible = new int[]{emptyId - 1, emptyId + 1, emptyId - 4, emptyId + 4}; // left, right, up, down
@@ -70,25 +72,7 @@ public class PuzzleManager {
         this.gameboard = gameboard;
     }
 
-    public void moveTile(int tile) {
-
-        Log.d("PuzzleManager", "Move Tile: " + gameboard[tile].toString() + " and index: " + tile);
-        Log.d("PuzzleManager", "Empty Tile: " + gameboard[emptyId].toString() + " and index: " + emptyId);
-
-        Bitmap move = gameboard[tile];
-        //Bitmap tempBit = Bitmap.createBitmap(move);
-        Bitmap empty = gameboard[emptyId];
-
-        gameboard[tile] = empty;
-        gameboard[emptyId] = move;
-
-        int temp = emptyId;
-        emptyId = tile;
-        tile = temp;
-
-        Log.d("PuzzleManager", "Move Tile: " + gameboard[tile].toString() + " and index: " + tile);
-        Log.d("PuzzleManager", "Empty Tile: " + gameboard[emptyId].toString() + " and index: " + emptyId);
-    }
+    // may not use this
     public Bitmap find(Bitmap b) {
         for (int i = 0; i < gameboard.length; i++) {
             if (b.equals(gameboard[i])) {

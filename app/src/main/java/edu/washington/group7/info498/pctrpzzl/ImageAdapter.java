@@ -83,6 +83,7 @@ public class ImageAdapter extends BaseAdapter {
         if (position != PuzzleManager.getInstance().getEmptyId()) {
             image.setImageBitmap(images.get(position));
         } else {
+            // place empty bitmap when moving
             Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
             Bitmap bmp = Bitmap.createBitmap(imageWidth, imageHeight, conf);
             image.setImageBitmap(bmp);

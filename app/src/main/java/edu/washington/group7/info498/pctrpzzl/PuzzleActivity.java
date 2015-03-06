@@ -33,11 +33,8 @@ public class PuzzleActivity extends ActionBarActivity {
         setContentView(R.layout.activity_puzzle);
 
         final ImageView imageView = (ImageView) findViewById(R.id.imageView);
-        final RelativeLayout theThing = (RelativeLayout) findViewById(R.id.mainLayout);
-
         InputStream bitmap = null;
 
-        int padding = 0;
         try {
             bitmap = getAssets().open("background.png");
             Bitmap bit = BitmapFactory.decodeStream(bitmap);
@@ -60,14 +57,12 @@ public class PuzzleActivity extends ActionBarActivity {
                 imageView.setVisibility(ImageView.INVISIBLE);
 
                 ArrayList<Bitmap> images;
-                //Map<Bitmap, Integer> gameboard = new HashMap<Bitmap, Integer>();
                 Bitmap[] gameboard = new Bitmap[16];
                 int index = 0;
                 final PuzzleManager pm = PuzzleManager.getInstance();
 
                 images = splitImage(imageView, 16);
                 for (Bitmap image : images) {
-                  //  gameboard.put(image, index);
                     gameboard[index] = image;
                     index++;
                 }
@@ -76,8 +71,6 @@ public class PuzzleActivity extends ActionBarActivity {
                 //pm.shuffle();
 
                 GridView grid = (GridView) findViewById(R.id.gridView);
-
-
                 grid.setAdapter(new ImageAdapter(PuzzleActivity.this, images));
                 grid.setNumColumns((int) Math.sqrt(images.size()));
 
@@ -91,18 +84,10 @@ public class PuzzleActivity extends ActionBarActivity {
                                 (position == pm.getEmptyId() + 1) ||
                                 (position == pm.getEmptyId() - 4) ||
                                 (position == pm.getEmptyId() + 4)) {
-                            //pm.moveTile(position);
 
                             ImageAdapter adapter = (ImageAdapter) gridView.getAdapter();
-                           // Bitmap itemOne = (Bitmap) adapter.getItem(position);
-                           // Bitmap itemTwo = (Bitmap) adapter.getItem(pm.getEmptyId());
-
-                            //Log.d("Adapter", "image: " + itemOne.toString());
-                            //Log.d("adapter", "image: " + itemTwo.toString());
                             Log.d("Grid OnClick Check Map", "index: " + pm.getEmptyId());
                             adapter.swap(position, pm.getEmptyId());
-                            //adapter.notifyDataSetChanged();
-
                         }
 
 
