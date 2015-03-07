@@ -49,8 +49,8 @@ public class ImageAdapter extends BaseAdapter {
         Bitmap value = images.get(position);
         Bitmap emptyBit = images.get(empty);
 
-        Log.d("Adapter", "IMAGE: " + value.toString() + " at index: " + position);
-        Log.d("Adapter", "IMAGE: " + emptyBit.toString() + " at index: " + empty);
+        Log.d("Adapter", "Before index:" + position);//"IMAGE: " + value.toString() + " at index: " + position);
+        Log.d("Adapter", "Before empty:" + empty);//"IMAGE: " + emptyBit.toString() + " at index: " + empty);
 
         images.remove(position);
         images.add(position, emptyBit);
@@ -60,10 +60,12 @@ public class ImageAdapter extends BaseAdapter {
         Bitmap newValue = images.get(position);
         Bitmap newEmptyBit = images.get(empty);
 
-        Log.d("Adapter", "IMAGE: " + newValue.toString());
-        Log.d("Adapter", "IMAGE: " + newEmptyBit.toString());
+
 
         PuzzleManager.getInstance().setEmptyId(position);
+
+        Log.d("Adapter", "After index:" + images.indexOf(value));
+        Log.d("Adapter", "After empty:" + PuzzleManager.getInstance().getEmptyId());//images.indexOf(emptyBit));
 
         this.notifyDataSetChanged();
 

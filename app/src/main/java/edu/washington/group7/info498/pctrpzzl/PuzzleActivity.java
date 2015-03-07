@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 
 public class PuzzleActivity extends ActionBarActivity {
@@ -39,7 +40,6 @@ public class PuzzleActivity extends ActionBarActivity {
             bitmap = getAssets().open("background.png");
             Bitmap bit = BitmapFactory.decodeStream(bitmap);
             imageView.setImageBitmap(scaleBitmap(bit));
-
         } catch (IOException e) {
             Log.e("PuzzleActivity", "SOMETHING SOMETHING IO EXCEPTION");
         } finally {
@@ -68,11 +68,14 @@ public class PuzzleActivity extends ActionBarActivity {
                 }
 
                 pm.setGameboard(gameboard);
-                //pm.shuffle();
+                //pm.shuffle(); needs to be implemented
 
                 GridView grid = (GridView) findViewById(R.id.gridView);
                 grid.setAdapter(new ImageAdapter(PuzzleActivity.this, images));
                 grid.setNumColumns((int) Math.sqrt(images.size()));
+
+                //ImageAdapter adapter = (ImageAdapter) grid.getAdapter();
+                shuffle(pm);
 
                 grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
@@ -107,6 +110,12 @@ public class PuzzleActivity extends ActionBarActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_puzzle, menu);
         return true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        PuzzleManager.getInstance().setEmptyId(15);
+        super.onDestroy();
     }
 
     @Override
@@ -173,5 +182,34 @@ public class PuzzleActivity extends ActionBarActivity {
             yCoord += chunkHeight;
         }
         return chunkedImages;
+    }
+
+    private void shuffle(PuzzleManager pm) {
+        for (int i = 0; i < 1000; i++) {
+            ArrayList<Integer> moves = new ArrayList<Integer>();
+            int empty = pm.getEmptyId();
+            int length = pm.getGameboard().length;
+
+            // left, right, up, down
+            int[] possible = {empty - 1, empty + 1,empty - 4, empty + 4};
+
+
+            for (int choice : possible) {
+                boolean sameRow = (choice / 4) == (empty / 4);
+                boolean sameCol = (choice % 4) == (empty % 4);
+                if (choice <= length - 1 && choice >= 0) {
+                    if (sameRow || sameCol) {
+                        moves.add(choice);
+                    }
+
+                }
+            }
+            Random random = new Random();
+            int move = random.nextInt(moves.size());
+            Log.d("TheMove", " " + (moves.get(move)));
+            ImageAdapter adapter = (ImageAdapter) ((GridView) findViewById(R.id.gridView)).getAdapter();
+            adapter.swap(moves.get(move), empty);
+        }
+
     }
 }
