@@ -17,10 +17,12 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -55,26 +57,13 @@ public class PuzzleActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 imageView.setVisibility(ImageView.INVISIBLE);
-
                 ArrayList<Bitmap> images;
-                Bitmap[] gameboard = new Bitmap[16];
-                int index = 0;
                 final PuzzleManager pm = PuzzleManager.getInstance();
-
                 images = splitImage(imageView, 16);
-                for (Bitmap image : images) {
-                    gameboard[index] = image;
-                    index++;
-                }
-
-                pm.setGameboard(gameboard);
-                //pm.shuffle(); needs to be implemented
 
                 GridView grid = (GridView) findViewById(R.id.gridView);
                 grid.setAdapter(new ImageAdapter(PuzzleActivity.this, images));
                 grid.setNumColumns((int) Math.sqrt(images.size()));
-
-                //ImageAdapter adapter = (ImageAdapter) grid.getAdapter();
                 shuffle(pm);
 
                 grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -90,11 +79,15 @@ public class PuzzleActivity extends ActionBarActivity {
 
                             ImageAdapter adapter = (ImageAdapter) gridView.getAdapter();
                             Log.d("Grid OnClick Check Map", "index: " + pm.getEmptyId());
+                            pm.swap(position, pm.getEmptyId());
                             adapter.swap(position, pm.getEmptyId());
+
+                            if (pm.hasWon()) {
+                                Toast.makeText(PuzzleActivity.this, "You win!", Toast.LENGTH_LONG).show();
+                            }
+                        } else if (position == pm.getEmptyId()) {
+                            Toast.makeText(PuzzleActivity.this, "Can't let you move that, Star Fox.", Toast.LENGTH_SHORT).show();
                         }
-
-
-
                         Log.d("Grid Onclick", itemValue.toString());
                         Log.d("Grid OnClick Check Map", "index: " + position);
                     }
@@ -103,7 +96,6 @@ public class PuzzleActivity extends ActionBarActivity {
         });
 
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -114,7 +106,9 @@ public class PuzzleActivity extends ActionBarActivity {
 
     @Override
     protected void onDestroy() {
+        // force game to reset if you exit the activity
         PuzzleManager.getInstance().setEmptyId(15);
+        PuzzleManager.getInstance().resetGameboard();
         super.onDestroy();
     }
 
@@ -124,24 +118,23 @@ public class PuzzleActivity extends ActionBarActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
+    // scale a bitmap to 7/8ths of the screen width
     public Bitmap scaleBitmap(Bitmap bit) {
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
         int width = size.x;
         Bitmap scaledBitmap = Bitmap.createScaledBitmap(bit, 7 * width / 8, 7 * width / 8, true);
-
         return scaledBitmap;
     }
+
     private ArrayList<Bitmap> splitImage(ImageView image, int chunkNumbers) {
 
         //For the number of rows and columns of the grid to be displayed
@@ -156,14 +149,6 @@ public class PuzzleActivity extends ActionBarActivity {
         //Getting the scaled bitmap of the source image
         BitmapDrawable drawable = (BitmapDrawable) image.getDrawable();
         Bitmap bitmap = drawable.getBitmap();
-
-        /*Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        int width = size.x;
-        //int height = size.y;
-
-        Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, 7 * width / 8, 7 * width / 8, true);*/
 
         Bitmap scaledBitmap = scaleBitmap(bitmap);
 
@@ -184,6 +169,7 @@ public class PuzzleActivity extends ActionBarActivity {
         return chunkedImages;
     }
 
+    // shuffle puzzle to create roughly "random" output puzzle
     private void shuffle(PuzzleManager pm) {
         for (int i = 0; i < 1000; i++) {
             ArrayList<Integer> moves = new ArrayList<Integer>();
@@ -197,18 +183,24 @@ public class PuzzleActivity extends ActionBarActivity {
             for (int choice : possible) {
                 boolean sameRow = (choice / 4) == (empty / 4);
                 boolean sameCol = (choice % 4) == (empty % 4);
+
+                // if not bigger or smaller than gameboard
                 if (choice <= length - 1 && choice >= 0) {
+                    // if in the same row or same column, add it to the moves
                     if (sameRow || sameCol) {
                         moves.add(choice);
                     }
 
                 }
             }
+            // choose random move from the ArrayList
             Random random = new Random();
             int move = random.nextInt(moves.size());
-            Log.d("TheMove", " " + (moves.get(move)));
+
+            // swap them
             ImageAdapter adapter = (ImageAdapter) ((GridView) findViewById(R.id.gridView)).getAdapter();
             adapter.swap(moves.get(move), empty);
+            pm.swap(moves.get(move), empty);
         }
 
     }

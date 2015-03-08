@@ -9,25 +9,21 @@ import android.graphics.Bitmap;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
 public class PuzzleManager {
 
-    private int emptyRow;
-    private int emptyCol;
-    private int rowsCols;
     private int emptyId;
-    private Bitmap[] gameboard;
-
+    private int[] gameboard;
     private static PuzzleManager instance = null;
 
+    // make this different difficult levels later on?
     private PuzzleManager() {
-        emptyRow = 3;
-        emptyCol = 3;
-        rowsCols = 4;
         emptyId = 15;
+        gameboard = new int[] {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
     }
 
     // singleton
@@ -42,44 +38,36 @@ public class PuzzleManager {
     public void setEmptyId(int newId) {
         emptyId = newId;
     }
-
-    // TODO
-    public void shuffle() {
-        for (int i = 0; i < 1000; i++) {
-            int[] possible = new int[]{emptyId - 1, emptyId + 1, emptyId - 4, emptyId + 4}; // left, right, up, down
-        }
-    }
     public int getEmptyId() {
         return emptyId;
     }
-    public int getEmptyRow() {
-        return emptyRow;
-    }
-
-    public int getEmptyCol() {
-        return emptyCol;
-    }
-
-    public int getRowsCols() {
-        return rowsCols;
-    }
-
-    public Bitmap[] getGameboard() {
+    public int[] getGameboard() {
         return gameboard;
     }
-
-    public void setGameboard(Bitmap[] gameboard) {
+    public void setGameboard(int[] gameboard) {
         this.gameboard = gameboard;
     }
 
-    // may not use this
-    public Bitmap find(Bitmap b) {
-        for (int i = 0; i < gameboard.length; i++) {
-            if (b.equals(gameboard[i])) {
-                return gameboard[i];
+    public void swap(int index, int empty) {
+        //Log.d("SWAP!", "" + Arrays.toString(gameboard));
+        int temp = gameboard[index];
+        gameboard[index] = gameboard[empty];
+        gameboard[empty] = temp;
+        //Log.d("SWAP!", "" + Arrays.toString(gameboard));
+    }
 
+    public void resetGameboard() {
+        gameboard = new int[] {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
+    }
+    public boolean hasWon() {
+        Log.d("GAMEBOARD HAS WON", Arrays.toString(gameboard));
+        for (int i = 0; i < gameboard.length; i++) {
+            if (gameboard[i] != i) {
+                Log.d("Loser", "Still no winner");
+                return false;
             }
         }
-        return null;
+        Log.d("Winner", "Still no winner");
+        return true;
     }
 }

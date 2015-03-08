@@ -42,15 +42,17 @@ public class ImageAdapter extends BaseAdapter {
         return position;
     }
 
+    // swap the empty tile bitmap with the tile bitmap at position
     public void swap(int position, int empty) {
 
-        Log.d("Positions", " " + position);
-        Log.d("Positions", " " + empty);
+        //Log.d("Positions", " " + position);
+        //Log.d("Positions", " " + empty);
+
         Bitmap value = images.get(position);
         Bitmap emptyBit = images.get(empty);
 
-        Log.d("Adapter", "Before index:" + position);//"IMAGE: " + value.toString() + " at index: " + position);
-        Log.d("Adapter", "Before empty:" + empty);//"IMAGE: " + emptyBit.toString() + " at index: " + empty);
+        //Log.d("Adapter", "Before index:" + position);
+        //Log.d("Adapter", "Before empty:" + empty);
 
         images.remove(position);
         images.add(position, emptyBit);
@@ -60,13 +62,12 @@ public class ImageAdapter extends BaseAdapter {
         Bitmap newValue = images.get(position);
         Bitmap newEmptyBit = images.get(empty);
 
-
-
         PuzzleManager.getInstance().setEmptyId(position);
 
-        Log.d("Adapter", "After index:" + images.indexOf(value));
-        Log.d("Adapter", "After empty:" + PuzzleManager.getInstance().getEmptyId());//images.indexOf(emptyBit));
+       // Log.d("Adapter", "After index:" + images.indexOf(value));
+       // Log.d("Adapter", "After empty:" + PuzzleManager.getInstance().getEmptyId());//images.indexOf(emptyBit));
 
+        // updates the view
         this.notifyDataSetChanged();
 
     }
@@ -76,7 +77,6 @@ public class ImageAdapter extends BaseAdapter {
         ImageView image;
         if (convertView == null) {
             image = new ImageView(context);
-
             image.setLayoutParams(new GridView.LayoutParams(imageWidth, imageHeight));
             image.setPadding(0, 0, 0, 0);
         } else {
@@ -86,7 +86,7 @@ public class ImageAdapter extends BaseAdapter {
             image.setImageBitmap(images.get(position));
         } else {
             // place empty bitmap when moving
-            Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
+            Bitmap.Config conf = Bitmap.Config.ARGB_8888;
             Bitmap bmp = Bitmap.createBitmap(imageWidth, imageHeight, conf);
             image.setImageBitmap(bmp);
         }
