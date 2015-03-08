@@ -1,9 +1,13 @@
 package edu.washington.group7.info498.pctrpzzl;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,6 +23,7 @@ import android.widget.ListAdapter;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -29,6 +34,7 @@ import java.util.Random;
 
 
 public class PuzzleActivity extends ActionBarActivity {
+    private static final int PIC_CROP = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,30 +43,55 @@ public class PuzzleActivity extends ActionBarActivity {
 
         final ImageView imageView = (ImageView) findViewById(R.id.imageView);
         InputStream bitmap = null;
+        Bitmap bit;
+        Uri imageUri;
 
-        try {
-            bitmap = getAssets().open("background.png");
-            Bitmap bit = BitmapFactory.decodeStream(bitmap);
-            imageView.setImageBitmap(scaleBitmap(bit));
-        } catch (IOException e) {
-            Log.e("PuzzleActivity", "SOMETHING SOMETHING IO EXCEPTION");
-        } finally {
+        Intent starter = this.getIntent();
+
+        if (starter != null && starter.getCategories() == null) {
+            imageUri = (Uri) starter.getParcelableExtra("bitmapImageUri");
+
             try {
-                bitmap.close();
+                // get the cropped bitmap, then crop it again for good measure
+                bit =  MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
+                imageView.setImageBitmap(scaleBitmap(bit));
+            } catch(FileNotFoundException fnfe) {
+                Log.e("onPictureResult", "Couldn't find your picture. Exception: " + fnfe.toString());
+            } catch(IOException io) {
+                Log.e("onPictureResult", "Couldn't find your picture. Exception: " + io.toString());
+            }
+        } else {
+            // only happens if clicked test
+            try {
+                bitmap = getAssets().open("background.png");
+                bit = BitmapFactory.decodeStream(bitmap);
+                imageView.setImageBitmap(scaleBitmap(bit));
             } catch (IOException e) {
-                Log.wtf("PuzzleActivity", "wtf");
+                Log.e("PuzzleActivity", "SOMETHING SOMETHING IO EXCEPTION");
+            } finally {
+                try {
+                    bitmap.close();
+                } catch (IOException e) {
+                    Log.wtf("PuzzleActivity", "wtf");
+                }
             }
         }
-        Button start = (Button) findViewById(R.id.startBtn);
+
+        final Button start = (Button) findViewById(R.id.startBtn);
 
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // hide the first view that shows up, as well as the start button
                 imageView.setVisibility(ImageView.INVISIBLE);
+                start.setVisibility(View.GONE);
+
+                // initialized some important stuff
                 ArrayList<Bitmap> images;
                 final PuzzleManager pm = PuzzleManager.getInstance();
                 images = splitImage(imageView, 16);
 
+                // place images in GridView and shuffle them
                 GridView grid = (GridView) findViewById(R.id.gridView);
                 grid.setAdapter(new ImageAdapter(PuzzleActivity.this, images));
                 grid.setNumColumns((int) Math.sqrt(images.size()));
@@ -72,24 +103,29 @@ public class PuzzleActivity extends ActionBarActivity {
                         GridView gridView = (GridView) view.getParent();
                         Bitmap itemValue = (Bitmap) gridView.getItemAtPosition(position);
 
+                        // if left, right, up or down (assuming a tile has a tile in that position)
                         if ((position == pm.getEmptyId() - 1) ||
                                 (position == pm.getEmptyId() + 1) ||
                                 (position == pm.getEmptyId() - 4) ||
                                 (position == pm.getEmptyId() + 4)) {
 
+                            // swap the tiles
                             ImageAdapter adapter = (ImageAdapter) gridView.getAdapter();
                             Log.d("Grid OnClick Check Map", "index: " + pm.getEmptyId());
                             pm.swap(position, pm.getEmptyId());
                             adapter.swap(position, pm.getEmptyId());
 
+                            // pop a toast if you win
                             if (pm.hasWon()) {
                                 Toast.makeText(PuzzleActivity.this, "You win!", Toast.LENGTH_LONG).show();
                             }
+
+                            // say something clever if you try and be cute and move the empty piece
                         } else if (position == pm.getEmptyId()) {
                             Toast.makeText(PuzzleActivity.this, "Can't let you move that, Star Fox.", Toast.LENGTH_SHORT).show();
                         }
-                        Log.d("Grid Onclick", itemValue.toString());
-                        Log.d("Grid OnClick Check Map", "index: " + position);
+                        //Log.d("Grid Onclick", itemValue.toString());
+                        //Log.d("Grid OnClick Check Map", "index: " + position);
                     }
                 });
             }
@@ -202,6 +238,5 @@ public class PuzzleActivity extends ActionBarActivity {
             adapter.swap(moves.get(move), empty);
             pm.swap(moves.get(move), empty);
         }
-
     }
 }
