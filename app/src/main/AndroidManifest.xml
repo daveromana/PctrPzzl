@@ -25,11 +25,15 @@
         </activity>
         <activity
             android:name=".PictureChoiceActivity"
-            android:label="@string/title_activity_picture_choice" >
+            android:label="@string/title_activity_picture_choice"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden">
         </activity>
         <activity
             android:name=".PuzzleActivity"
-            android:label="@string/title_activity_puzzle" >
+            android:label="@string/title_activity_puzzle"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden">
         </activity>
     </application>
 
