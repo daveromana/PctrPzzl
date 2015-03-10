@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
@@ -43,8 +44,8 @@ public class PuzzleActivity extends ActionBarActivity {
 
         final ImageView imageView = (ImageView) findViewById(R.id.imageView);
         InputStream bitmap = null;
-        Bitmap bit;
-        Uri imageUri;
+        Bitmap bit = null;
+        final Uri imageUri;
 
         Intent starter = this.getIntent();
 
@@ -54,7 +55,7 @@ public class PuzzleActivity extends ActionBarActivity {
             try {
                 // get the cropped bitmap, then crop it again for good measure
                 bit =  MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
-                imageView.setImageBitmap(scaleBitmap(bit));
+                imageView.setImageBitmap(scaleBitmapScreen(bit));
             } catch(FileNotFoundException fnfe) {
                 Log.e("onPictureResult", "Couldn't find your picture. Exception: " + fnfe.toString());
             } catch(IOException io) {
@@ -65,7 +66,7 @@ public class PuzzleActivity extends ActionBarActivity {
             try {
                 bitmap = getAssets().open("background.png");
                 bit = BitmapFactory.decodeStream(bitmap);
-                imageView.setImageBitmap(scaleBitmap(bit));
+                imageView.setImageBitmap(scaleBitmapScreen(bit));
             } catch (IOException e) {
                 Log.e("PuzzleActivity", "SOMETHING SOMETHING IO EXCEPTION");
             } finally {
@@ -78,6 +79,8 @@ public class PuzzleActivity extends ActionBarActivity {
         }
 
         final Button start = (Button) findViewById(R.id.startBtn);
+        final ImageView referencePic = (ImageView) findViewById(R.id.referencePic);
+        final Bitmap reference = bit;
 
         start.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,6 +88,10 @@ public class PuzzleActivity extends ActionBarActivity {
                 // hide the first view that shows up, as well as the start button
                 imageView.setVisibility(ImageView.INVISIBLE);
                 start.setVisibility(View.GONE);
+                referencePic.setImageBitmap(scaleBitmap(reference, 200, 200));
+
+                final Chronometer timer = (Chronometer) findViewById(R.id.chronometer);
+                timer.start();
 
                 // initialized some important stuff
                 ArrayList<Bitmap> images;
@@ -118,6 +125,9 @@ public class PuzzleActivity extends ActionBarActivity {
                             // pop a toast if you win
                             if (pm.hasWon()) {
                                 Toast.makeText(PuzzleActivity.this, "You win!", Toast.LENGTH_LONG).show();
+                                timer.stop();
+                                imageView.setVisibility(ImageView.VISIBLE);
+                                gridView.setVisibility(View.INVISIBLE);
                             }
 
                             // say something clever if you try and be cute and move the empty piece
@@ -162,12 +172,16 @@ public class PuzzleActivity extends ActionBarActivity {
     }
 
     // scale a bitmap to 7/8ths of the screen width
-    public Bitmap scaleBitmap(Bitmap bit) {
+    public Bitmap scaleBitmapScreen(Bitmap bit) {
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
         int width = size.x;
-        Bitmap scaledBitmap = Bitmap.createScaledBitmap(bit, 7 * width / 8, 7 * width / 8, true);
+        return scaleBitmap(bit, 7 * width / 8, 7 * width / 8);
+    }
+
+    public Bitmap scaleBitmap(Bitmap bit, int width, int height) {
+        Bitmap scaledBitmap = Bitmap.createScaledBitmap(bit, width, height, true);
         return scaledBitmap;
     }
 
@@ -186,7 +200,7 @@ public class PuzzleActivity extends ActionBarActivity {
         BitmapDrawable drawable = (BitmapDrawable) image.getDrawable();
         Bitmap bitmap = drawable.getBitmap();
 
-        Bitmap scaledBitmap = scaleBitmap(bitmap);
+        Bitmap scaledBitmap = scaleBitmapScreen(bitmap);
 
         rows = cols = (int) Math.sqrt(chunkNumbers);
         chunkHeight = scaledBitmap.getHeight() / rows;
