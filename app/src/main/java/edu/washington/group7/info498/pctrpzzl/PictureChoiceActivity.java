@@ -56,7 +56,7 @@ public class PictureChoiceActivity extends Activity {
                 // get content from gallery
                 Intent intent = new Intent();
                 intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
+                intent.setAction(Intent.ACTION_PICK);
                 startActivityForResult(Intent.createChooser(intent,
                         "Select Picture"), SELECT_PICTURE);
                 //Toast.makeText(PictureChoiceActivity.this, "You used a picture you had on your phone to make the puzzle!", Toast.LENGTH_SHORT).show();
