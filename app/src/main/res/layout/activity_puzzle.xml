@@ -52,4 +52,14 @@
         android:layout_alignRight="@+id/gridView"
         android:layout_above="@+id/referencePic" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Large Text"
+        android:id="@+id/movesView"
+        android:layout_above="@+id/chronometer"
+        android:layout_alignRight="@+id/chronometer"
+        android:layout_alignEnd="@+id/chronometer" />
+
 </RelativeLayout>

@@ -23,6 +23,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.FileNotFoundException;
@@ -37,6 +38,7 @@ import java.util.Random;
 
 public class PuzzleActivity extends Activity {
     private static final int PIC_CROP = 3;
+    private int index = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +83,8 @@ public class PuzzleActivity extends Activity {
 
         final Button start = (Button) findViewById(R.id.startBtn);
         final ImageView referencePic = (ImageView) findViewById(R.id.referencePic);
+        final TextView movesView = (TextView) findViewById(R.id.movesView);
+        movesView.setVisibility(View.INVISIBLE);
         final Bitmap reference = bit;
 
         start.setOnClickListener(new View.OnClickListener() {
@@ -90,6 +94,10 @@ public class PuzzleActivity extends Activity {
                 imageView.setVisibility(ImageView.INVISIBLE);
                 start.setVisibility(View.GONE);
                 referencePic.setImageBitmap(scaleBitmap(reference, 200, 200));
+                movesView.setVisibility(View.VISIBLE);
+
+
+                movesView.setText("Moves: " + index);
 
                 final Chronometer timer = (Chronometer) findViewById(R.id.chronometer);
                 timer.start();
@@ -116,7 +124,8 @@ public class PuzzleActivity extends Activity {
                                 (position == pm.getEmptyId() + 1) ||
                                 (position == pm.getEmptyId() - 4) ||
                                 (position == pm.getEmptyId() + 4)) {
-
+                            clicked();
+                            movesView.setText("Moves: " + index);
                             // swap the tiles
                             ImageAdapter adapter = (ImageAdapter) gridView.getAdapter();
                             Log.d("Grid OnClick Check Map", "index: " + pm.getEmptyId());
@@ -142,6 +151,10 @@ public class PuzzleActivity extends Activity {
             }
         });
 
+    }
+
+    public int clicked() {
+        return index += 1;
     }
 
     @Override
