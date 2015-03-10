@@ -1,5 +1,6 @@
 package edu.washington.group7.info498.pctrpzzl;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -32,7 +33,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
-public class PictureChoiceActivity extends ActionBarActivity {
+public class PictureChoiceActivity extends Activity {
 
     // keep these constants for when calling back
     private static final int SELECT_PICTURE = 1;

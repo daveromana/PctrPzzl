@@ -1,5 +1,6 @@
 package edu.washington.group7.info498.pctrpzzl;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -33,7 +34,7 @@ import java.util.Map;
 import java.util.Random;
 
 
-public class PuzzleActivity extends ActionBarActivity {
+public class PuzzleActivity extends Activity {
     private static final int PIC_CROP = 3;
 
     @Override
