@@ -66,33 +66,16 @@ public class PictureChoiceActivity extends Activity {
         cameraBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                // this stuff does magic things to make sure image saves at full resolution
-                /*ContentValues values = new ContentValues();
-                values.put(MediaStore.Images.Media.TITLE, "New Picture");
-                values.put(MediaStore.Images.Media.DESCRIPTION, "From your Camera");
-                imageUri = getContentResolver().insert(
-                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);*/
-
-                try
-                {
+                try {
                     File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
                     File image = File.createTempFile("my_app", ".jpg",storageDir);
                     uri = Uri.fromFile(image);
-                }catch(Exception e){
+                } catch(Exception e) {
                     Toast.makeText(PictureChoiceActivity.this, "Camera error", Toast.LENGTH_SHORT).show();
                 }
-
-
-                        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-                        startActivityForResult(takePictureIntent, CAMERA_CAPTURE);
-
-
-                //Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                //intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-                //startActivityForResult(intent, CAMERA_CAPTURE);
-                //Toast.makeText(PictureChoiceActivity.this, "You took a picture to make the puzzle!", Toast.LENGTH_SHORT).show();
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+                startActivityForResult(takePictureIntent, CAMERA_CAPTURE);
             }
         });
 
@@ -120,32 +103,18 @@ public class PictureChoiceActivity extends Activity {
             case CAMERA_CAPTURE:
                 // crop camera-taken image
                 if (resultCode == RESULT_OK) {
-
-
-                    //Uri selectedImage = imageReturnedIntent.getData();
                     pictureCrop(uri);
                 }
                 break;
             case PIC_CROP:
                 // crop whatever is sent in and start the puzzle activity
                 if (resultCode == RESULT_OK) {
-                    //Bundle extras = imageReturnedIntent.getExtras();
-                    //Bitmap image = (Bitmap) extras.get("data");
-                    //Bitmap image = (Bitmap) extras.getParcelable("data");
-                    //Uri selectedImage = getImageUri(this, image);
-
                     Intent intent = new Intent(PictureChoiceActivity.this, PuzzleActivity.class);
                     intent.putExtra("bitmapImageUri", getTempUri());
                     startActivity(intent);
                 }
                 break;
         }
-    }
-
-    // get the URI for a given bitmap
-    private Uri getImageUri(Context inContext, Bitmap inImage) {
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
-        return Uri.parse(path);
     }
 
     // crop the image at the passed in Uri
@@ -162,8 +131,7 @@ public class PictureChoiceActivity extends Activity {
         cropIntent.putExtra("outputX", 400);
         cropIntent.putExtra("outputY", 400);
         //retrieve data on return
-        cropIntent.putExtra("return-data", false);
-        Uri cropUri = null;
+        cropIntent.putExtra("return-data", false); //set to false to avoid TransactionTooLargeException with Crop Activity
         cropIntent.putExtra(MediaStore.EXTRA_OUTPUT, getTempUri());
         Log.d("PictureCrop", "should hopefully start cropping");
         //start the activity - we handle returning in onActivityResult
@@ -176,12 +144,12 @@ public class PictureChoiceActivity extends Activity {
     }
 
     private File getTempFile() {
-            File f = new File(Environment.getExternalStorageDirectory(),"TEMP_PHOTO_FILE");
-            try {
-                f.createNewFile();
-            } catch (IOException e) {
-            }
-            return f;
+        File f = new File(Environment.getExternalStorageDirectory(),"TEMP_PHOTO_FILE");
+        try {
+            f.createNewFile();
+        } catch (IOException e) {
+        }
+        return f;
     }
 
     @Override
