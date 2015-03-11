@@ -39,7 +39,7 @@ public class PictureChoiceActivity extends Activity {
     private static final int SELECT_PICTURE = 1;
     private static final int CAMERA_CAPTURE = 2;
     private static final int PIC_CROP = 3;
-    //private Uri imageUri;
+    private Uri uri = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,9 +74,24 @@ public class PictureChoiceActivity extends Activity {
                 imageUri = getContentResolver().insert(
                         MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);*/
 
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                try
+                {
+                    File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+                    File image = File.createTempFile("my_app", ".jpg",storageDir);
+                    uri = Uri.fromFile(image);
+                }catch(Exception e){
+                    Toast.makeText(PictureChoiceActivity.this, "Camera error", Toast.LENGTH_SHORT).show();
+                }
+
+
+                        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+                        startActivityForResult(takePictureIntent, CAMERA_CAPTURE);
+
+
+                //Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 //intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-                startActivityForResult(intent, CAMERA_CAPTURE);
+                //startActivityForResult(intent, CAMERA_CAPTURE);
                 //Toast.makeText(PictureChoiceActivity.this, "You took a picture to make the puzzle!", Toast.LENGTH_SHORT).show();
             }
         });
@@ -105,19 +120,22 @@ public class PictureChoiceActivity extends Activity {
             case CAMERA_CAPTURE:
                 // crop camera-taken image
                 if (resultCode == RESULT_OK) {
-                    Uri selectedImage = imageReturnedIntent.getData();
-                    pictureCrop(selectedImage);
+
+
+                    //Uri selectedImage = imageReturnedIntent.getData();
+                    pictureCrop(uri);
                 }
                 break;
             case PIC_CROP:
                 // crop whatever is sent in and start the puzzle activity
                 if (resultCode == RESULT_OK) {
-                    Bundle extras = imageReturnedIntent.getExtras();
-                    Bitmap image = (Bitmap) extras.get("data");
-                    Uri selectedImage = getImageUri(this, image);
+                    //Bundle extras = imageReturnedIntent.getExtras();
+                    //Bitmap image = (Bitmap) extras.get("data");
+                    //Bitmap image = (Bitmap) extras.getParcelable("data");
+                    //Uri selectedImage = getImageUri(this, image);
 
                     Intent intent = new Intent(PictureChoiceActivity.this, PuzzleActivity.class);
-                    intent.putExtra("bitmapImageUri", selectedImage);
+                    intent.putExtra("bitmapImageUri", getTempUri());
                     startActivity(intent);
                 }
                 break;
@@ -144,11 +162,26 @@ public class PictureChoiceActivity extends Activity {
         cropIntent.putExtra("outputX", 400);
         cropIntent.putExtra("outputY", 400);
         //retrieve data on return
-        cropIntent.putExtra("return-data", true);
+        cropIntent.putExtra("return-data", false);
+        Uri cropUri = null;
+        cropIntent.putExtra(MediaStore.EXTRA_OUTPUT, getTempUri());
         Log.d("PictureCrop", "should hopefully start cropping");
         //start the activity - we handle returning in onActivityResult
         startActivityForResult(Intent.createChooser(cropIntent,
                 "Crop Picture"), PIC_CROP);
+    }
+
+    private Uri getTempUri() {
+        return Uri.fromFile(getTempFile());
+    }
+
+    private File getTempFile() {
+            File f = new File(Environment.getExternalStorageDirectory(),"TEMP_PHOTO_FILE");
+            try {
+                f.createNewFile();
+            } catch (IOException e) {
+            }
+            return f;
     }
 
     @Override
