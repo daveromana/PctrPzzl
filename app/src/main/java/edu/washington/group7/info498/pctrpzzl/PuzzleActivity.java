@@ -140,10 +140,12 @@ public class PuzzleActivity extends Activity {
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         GridView gridView = (GridView) view.getParent();
                         Bitmap itemValue = (Bitmap) gridView.getItemAtPosition(position);
-
                         // if left, right, up or down (assuming a tile has a tile in that position)
-                        if ((position == pm.getEmptyId() - 1) ||
-                                (position == pm.getEmptyId() + 1) ||
+                        boolean sameRow = (position / difficulty) == (pm.getEmptyId() / difficulty);
+                        boolean left = (position == pm.getEmptyId() - 1);
+                        boolean right = (position == pm.getEmptyId() + 1);
+
+                        if ((left && sameRow) || (right && sameRow) ||
                                 (position == pm.getEmptyId() - difficulty) ||
                                 (position == pm.getEmptyId() + difficulty)) {
                             clicked();
