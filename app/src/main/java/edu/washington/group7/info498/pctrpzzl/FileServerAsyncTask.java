@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -34,6 +35,7 @@ public class FileServerAsyncTask extends AsyncTask {
              * Create a server socket and wait for client connections. This
              * call blocks until a connection is accepted from a client
              */
+            Log.i("FileServerAsyncTask.java", "attempting to link server + client");
             ServerSocket serverSocket = new ServerSocket(8888);
             Socket client = serverSocket.accept();
 

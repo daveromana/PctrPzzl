@@ -49,18 +49,16 @@
         android:layout_height="wrap_content"
         android:id="@+id/chronometer"
         android:layout_centerHorizontal="true"
-        android:layout_alignRight="@+id/gridView"
-        android:layout_above="@+id/referencePic" />
+        android:layout_alignLeft="@+id/gridView"
+        android:layout_above="@+id/record" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Large Text"
         android:id="@+id/movesView"
-        android:layout_above="@+id/chronometer"
-        android:layout_alignRight="@+id/chronometer"
-        android:layout_alignEnd="@+id/chronometer" />
+        android:layout_above="@+id/chronometer" />
 
     <TextView
         android:layout_width="wrap_content"
