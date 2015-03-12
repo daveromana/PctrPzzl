@@ -19,8 +19,17 @@
         android:layout_height="wrap_content"
         android:text="Find Other Players"
         android:id="@+id/btnFind"
+        android:layout_marginBottom="121dp"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="57dp" />
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Connect"
+        android:id="@+id/btnConnect"
+        android:layout_alignBaseline="@+id/textDevices"
+        android:layout_alignBottom="@+id/textDevices"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
