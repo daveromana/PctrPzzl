@@ -25,7 +25,8 @@ import android.widget.ListAdapter;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import android.preference.PreferenceManager;
+import android.content.SharedPreferences;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -84,8 +85,13 @@ public class PuzzleActivity extends Activity {
         final Button start = (Button) findViewById(R.id.startBtn);
         final ImageView referencePic = (ImageView) findViewById(R.id.referencePic);
         final TextView movesView = (TextView) findViewById(R.id.movesView);
+        final TextView recordView = (TextView) findViewById(R.id.record);
         movesView.setVisibility(View.INVISIBLE);
         final Bitmap reference = bit;
+
+        final SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        final String record = sharedPrefs.getString("record", "No record");
+        recordView.setText("Record: " +record);
 
         start.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,7 +101,6 @@ public class PuzzleActivity extends Activity {
                 start.setVisibility(View.GONE);
                 referencePic.setImageBitmap(scaleBitmap(reference, 200, 200));
                 movesView.setVisibility(View.VISIBLE);
-
 
                 movesView.setText("Moves: " + index);
 
@@ -134,10 +139,18 @@ public class PuzzleActivity extends Activity {
 
                             // pop a toast if you win
                             if (pm.hasWon()) {
-                                Toast.makeText(PuzzleActivity.this, "You win!", Toast.LENGTH_LONG).show();
                                 timer.stop();
                                 imageView.setVisibility(ImageView.VISIBLE);
                                 gridView.setVisibility(View.INVISIBLE);
+                                if(record.equals("No record") || getSecondsFromDurationString(timer.getText().toString()) < getSecondsFromDurationString(record)) {
+                                    SharedPreferences.Editor editor = sharedPrefs.edit();
+                                    editor.putString("record", timer.getText().toString());
+                                    editor.commit();
+                                    recordView.setText("Record: " +timer.getText().toString());
+                                    Toast.makeText(PuzzleActivity.this, "New record! Congratulations!", Toast.LENGTH_LONG).show();
+                                } else {
+                                    Toast.makeText(PuzzleActivity.this, "You win!", Toast.LENGTH_LONG).show();
+                                }
                             }
 
                             // say something clever if you try and be cute and move the empty piece
@@ -151,6 +164,29 @@ public class PuzzleActivity extends Activity {
             }
         });
 
+    }
+
+    private int getSecondsFromDurationString(String value){
+
+        String [] parts = value.split(":");
+
+        // Wrong format, no value for you.
+        if(parts.length < 2 || parts.length > 3)
+            return 0;
+
+        int seconds = 0, minutes = 0, hours = 0;
+
+        if(parts.length == 2){
+            seconds = Integer.parseInt(parts[1]);
+            minutes = Integer.parseInt(parts[0]);
+        }
+        else if(parts.length == 3){
+            seconds = Integer.parseInt(parts[2]);
+            minutes = Integer.parseInt(parts[1]);
+            hours = Integer.parseInt(parts[1]);
+        }
+
+        return seconds + (minutes*60) + (hours*3600);
     }
 
     public int clicked() {

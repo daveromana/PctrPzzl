@@ -20,6 +20,7 @@ public class MainActivity extends Activity {
 
         Button spBtn = (Button) findViewById(R.id.spBtn);
         Button mpBtn = (Button) findViewById(R.id.mpBtn);
+        Button settingsBtn = (Button) findViewById(R.id.settingsBtn);
 
         spBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -34,6 +35,14 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 Toast.makeText(MainActivity.this, "You're playing multiplayer, have fun!", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(MainActivity.this, MultiPlayerSetupActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        settingsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
                 startActivity(intent);
             }
         });

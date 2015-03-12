@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="Game Settings" >
+        <Preference android:title="Reset Best Time"
+            android:key="button"
+            android:summary="Tap to reset your best recorded time"/>
+        <ListPreference
+        android:key="difficulty"
+        android:title="Puzzle Difficulty"
+        android:summary="How much of a challenge do you want?"
+        android:defaultValue="easy"
+        android:entries="@array/difficulty"
+        android:entryValues="@array/difficultyValues"/>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Multiplayer Settings">
+        <EditTextPreference
+            android:title="Set Multiplayer Username"
+            android:summary="Type your desired username"
+            android:inputType="textNoSuggestions"
+            android:key="username"/>
+    </PreferenceCategory>
+
+</PreferenceScreen>
