@@ -121,13 +121,15 @@ public class MultiPlayerSetupActivity extends ActionBarActivity {
         WifiP2pDevice device = peers.get(0);
 
         WifiP2pConfig config = new WifiP2pConfig();
-        config.deviceAddress = device.deviceAddress;
+        config.deviceAddress = device.deviceAddress; //uses the same address?
+        Log.i("MultiplayerSetupActivity.java connect() :", "address: " + config.deviceAddress + ", " + device.deviceAddress);
 
         mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
 
             @Override
             public void onSuccess() {
                 // P2pReceiver will notify
+                Log.i("MultiPlayerSetupActivity.java", "onSuccess(), initiating FilServerAsyncTask");
                 new FileServerAsyncTask(getApplicationContext());
                 Toast.makeText(MultiPlayerSetupActivity.this, "Connected!",
                         Toast.LENGTH_SHORT).show();
@@ -136,7 +138,7 @@ public class MultiPlayerSetupActivity extends ActionBarActivity {
 
             @Override
             public void onFailure(int reason) {
-                Toast.makeText(MultiPlayerSetupActivity.this, "Connect failed. Retry.",
+                Toast.makeText(MultiPlayerSetupActivity.this, "Connect failed. Please retry.",
                         Toast.LENGTH_SHORT).show();
             }
         });
