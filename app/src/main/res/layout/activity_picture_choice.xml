@@ -6,35 +6,41 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="edu.washington.group7.info498.pctrpzzl.PictureChoiceActivity">
 
-    <Button
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start from picture on phone"
-        android:id="@+id/pictBtn"
-        android:layout_centerVertical="true"
+        android:id="@+id/full_logo"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="0dp"
+        android:src="@drawable/full_logo"
         android:layout_centerHorizontal="true" />
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Take a picture"
-        android:id="@+id/cameraBtn"
-        android:layout_marginTop="25dp"
-        android:layout_below="@+id/pictBtn"
-        android:layout_alignRight="@+id/pictBtn"
-        android:layout_alignEnd="@+id/pictBtn"
-        android:layout_alignLeft="@+id/pictBtn"
-        android:layout_alignStart="@+id/pictBtn" />
+        android:text="Start with default picture"
+        android:id="@+id/defaultBtn"
+        android:layout_below="@+id/full_logo"
+        android:layout_marginTop="75dp"
+        />
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Start from default picture (testing)"
-        android:id="@+id/defaultBtn"
-        android:layout_marginBottom="27dp"
-        android:layout_above="@+id/pictBtn"
-        android:layout_alignLeft="@+id/pictBtn"
-        android:layout_alignStart="@+id/pictBtn"
-        android:layout_alignRight="@+id/pictBtn"
-        android:layout_alignEnd="@+id/pictBtn" />
+        android:text="Start with picture on phone"
+        android:id="@+id/pictBtn"
+        android:layout_below="@+id/defaultBtn"
+        android:layout_marginTop="25dp"
+        />
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Take a new picture"
+        android:id="@+id/cameraBtn"
+        android:layout_below="@+id/pictBtn"
+        android:layout_marginTop="25dp"
+
+        />
+
 </RelativeLayout>
