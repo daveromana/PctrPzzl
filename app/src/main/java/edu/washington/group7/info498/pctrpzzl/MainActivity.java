@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+import edu.washington.group7.info498.pctrpzzl.R;
 
 
 public class MainActivity extends Activity {
@@ -34,7 +35,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 //Toast.makeText(MainActivity.this, "You're playing multiplayer, have fun!", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(MainActivity.this, MultiPlayerSetupActivity.class);
+                Intent intent = new Intent(MainActivity.this, WiFiDirectActivity.class);
                 startActivity(intent);
             }
         });
