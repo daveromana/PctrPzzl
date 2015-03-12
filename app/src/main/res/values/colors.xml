@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="offWhite" type="color">#ECF0F0</item>
+    <item name="darkBlue" type="color">#34495D</item>
+    <item name="gray" type="color">#94A4A5</item>
+    <item name="hiBlue" type="color">#2980B9</item>
+    <integer-array name="androidcolors">
+        <item>@color/offWhite</item>
+        <item>@color/darkBlue</item>
+        <item>@color/gray</item>
+        <item>@color/hiBlue</item>
+    </integer-array>
+
+</resources>
