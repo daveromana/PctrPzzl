@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.wifi.WifiManager;
 import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
@@ -51,6 +52,7 @@ public class MultiPlayerSetupActivity extends ActionBarActivity {
         mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         mChannel = mManager.initialize(this, getMainLooper(), null);
         mReceiver = new P2pReceiver(mManager, mChannel, this);
+        final WifiManager wifi = (WifiManager)getSystemService(Context.WIFI_SERVICE);
 
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
@@ -78,7 +80,13 @@ public class MultiPlayerSetupActivity extends ActionBarActivity {
         btnF.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                discover();
+                if(wifi.isWifiEnabled()){ //only check for devices if wifi is enabled
+                    Log.i("MultiPlayerSetup.java : ", "wifi is enabled");
+                    discover();
+                } else {
+                    Log.i("MultiPlayerSetup.java : ", "wifi is NOT enabled");
+                    Toast.makeText(MultiPlayerSetupActivity.this, "please enable wifi", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -95,12 +103,14 @@ public class MultiPlayerSetupActivity extends ActionBarActivity {
         mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
+                Log.i("MultiPlayerSetupActivity.java : ", "find other player btn pressed, discovering devices...");
                 Toast.makeText(MultiPlayerSetupActivity.this, "discovering devices", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onFailure(int reasonCode) {
-                Toast.makeText(MultiPlayerSetupActivity.this, "No devices discovered "+Integer.toString(reasonCode), Toast.LENGTH_SHORT).show();
+                Log.i("MultiPlayerSetupActivity.java : ", "find other player btn pressed, no other devices discovered "+Integer.toString(reasonCode));
+                Toast.makeText(MultiPlayerSetupActivity.this, "No other players found", Toast.LENGTH_SHORT).show();
             }
         });
     }
