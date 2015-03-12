@@ -9,8 +9,11 @@ import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pManager;
+import android.os.AsyncTask;
+import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +21,12 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,6 +82,13 @@ public class MultiPlayerSetupActivity extends ActionBarActivity {
             }
         });
 
+        Button btnC = (Button)findViewById(R.id.btnConnect);
+        btnC.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                connect();
+            }
+        });
     }
 
     public void discover(){
@@ -80,14 +96,11 @@ public class MultiPlayerSetupActivity extends ActionBarActivity {
             @Override
             public void onSuccess() {
                 Toast.makeText(MultiPlayerSetupActivity.this, "discovering devices", Toast.LENGTH_SHORT).show();
-
-                TextView d = (TextView)findViewById(R.id.textDevices);
-
             }
 
             @Override
             public void onFailure(int reasonCode) {
-                Toast.makeText(MultiPlayerSetupActivity.this, "No devices discovered", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MultiPlayerSetupActivity.this, "No devices discovered "+Integer.toString(reasonCode), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -105,6 +118,10 @@ public class MultiPlayerSetupActivity extends ActionBarActivity {
             @Override
             public void onSuccess() {
                 // P2pReceiver will notify
+                new FileServerAsyncTask(getApplicationContext());
+                Toast.makeText(MultiPlayerSetupActivity.this, "Connected!",
+                        Toast.LENGTH_SHORT).show();
+
             }
 
             @Override
@@ -115,7 +132,12 @@ public class MultiPlayerSetupActivity extends ActionBarActivity {
         });
     }
 
-
+    public void setConText (){
+        TextView d = (TextView)findViewById(R.id.textDevices);
+        if (peers != null){
+            d.setText(peers.toString());
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -152,3 +174,5 @@ public class MultiPlayerSetupActivity extends ActionBarActivity {
         unregisterReceiver(mReceiver);
     }
 }
+
+

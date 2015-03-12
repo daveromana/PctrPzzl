@@ -39,9 +39,9 @@ public class P2pReceiver extends BroadcastReceiver {
             // Check to see if Wi-Fi is enabled and notify appropriate activity
             int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1);
             if (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED) {
-                Toast.makeText(mActivity, "P2P enabled!", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(mActivity, "P2P enabled!", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(mActivity, "P2P not enabled!", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(mActivity, "P2P not enabled!", Toast.LENGTH_SHORT).show();
             }
         } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
             // Call WifiP2pManager.requestPeers() to get a list of current peers
@@ -53,6 +53,7 @@ public class P2pReceiver extends BroadcastReceiver {
                 mManager.requestPeers(mChannel, mActivity.peerListListener);
             }
             Toast.makeText(mActivity, "device list changed!", Toast.LENGTH_SHORT).show();
+            mActivity.setConText();
         } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
             // Respond to new connection or disconnections
         } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
