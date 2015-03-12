@@ -1,13 +1,16 @@
 package edu.washington.group7.info498.pctrpzzl;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -34,6 +37,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 
 public class PuzzleActivity extends Activity {
@@ -100,7 +104,9 @@ public class PuzzleActivity extends Activity {
                 movesView.setText("Moves: " + index);
 
                 final Chronometer timer = (Chronometer) findViewById(R.id.chronometer);
+                timer.setBase(SystemClock.elapsedRealtime());
                 timer.start();
+
 
                 // initialized some important stuff
                 ArrayList<Bitmap> images;
@@ -134,10 +140,42 @@ public class PuzzleActivity extends Activity {
 
                             // pop a toast if you win
                             if (pm.hasWon()) {
-                                Toast.makeText(PuzzleActivity.this, "You win!", Toast.LENGTH_LONG).show();
+                                //Toast.makeText(PuzzleActivity.this, "You win!", Toast.LENGTH_LONG).show();
                                 timer.stop();
                                 imageView.setVisibility(ImageView.VISIBLE);
                                 gridView.setVisibility(View.INVISIBLE);
+
+                                AlertDialog.Builder builder = new AlertDialog.Builder(PuzzleActivity.this);
+                                long elapsedMillis = SystemClock.elapsedRealtime() - timer.getBase();
+                                String message =
+                                        "It took you " +
+                                        String.format("%d min, %d sec",
+                                            TimeUnit.MILLISECONDS.toMinutes(elapsedMillis),
+                                            TimeUnit.MILLISECONDS.toSeconds(elapsedMillis) -
+                                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(elapsedMillis))) +
+                                            " and " + index + " moves to solve this puzzle!";
+                                builder.setMessage(message)
+                                        .setTitle("You win!");
+
+                                builder.setPositiveButton("Take me home", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        Intent intent = new Intent(PuzzleActivity.this, MainActivity.class);
+                                        PuzzleManager.getInstance().setEmptyId(15);
+                                        PuzzleManager.getInstance().resetGameboard();
+                                        startActivity(intent);
+                                    }
+                                });
+                                builder.setNegativeButton("Start another game", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        // User cancelled the dialog
+                                        Intent intent = new Intent(PuzzleActivity.this, PictureChoiceActivity.class);
+                                        PuzzleManager.getInstance().setEmptyId(15);
+                                        PuzzleManager.getInstance().resetGameboard();
+                                        startActivity(intent);
+                                    }
+                                });
+                                AlertDialog dialog = builder.create();
+                                dialog.show();
                             }
 
                             // say something clever if you try and be cute and move the empty piece
