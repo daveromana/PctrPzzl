@@ -17,6 +17,7 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 
 import java.util.List;
@@ -65,6 +66,7 @@ public class SettingsActivity extends PreferenceActivity {
                 //Reset best time
                 editor.remove("record");
                 editor.commit();
+                Toast.makeText(SettingsActivity.this, "Your record has been reset!", Toast.LENGTH_LONG).show();
                 return true;
             }
         });

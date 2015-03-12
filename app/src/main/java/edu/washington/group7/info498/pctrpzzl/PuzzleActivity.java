@@ -94,7 +94,7 @@ public class PuzzleActivity extends Activity {
         final Bitmap reference = bit;
 
         final SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-        final String record = sharedPrefs.getString("record", "No record");
+        final String record = sharedPrefs.getString("record", "None");
         recordView.setText("Record: " +record);
 
         start.setOnClickListener(new View.OnClickListener() {
@@ -149,7 +149,7 @@ public class PuzzleActivity extends Activity {
                                 timer.stop();
                                 imageView.setVisibility(ImageView.VISIBLE);
                                 gridView.setVisibility(View.INVISIBLE);
-                                if(record.equals("No record") || getSecondsFromDurationString(timer.getText().toString()) < getSecondsFromDurationString(record)) {
+                                if(record.equals("None") || getSecondsFromDurationString(timer.getText().toString()) < getSecondsFromDurationString(record)) {
                                     SharedPreferences.Editor editor = sharedPrefs.edit();
                                     editor.putString("record", timer.getText().toString());
                                     editor.commit();
