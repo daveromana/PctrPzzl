@@ -17,6 +17,7 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
 
 
@@ -46,7 +47,7 @@ public class SettingsActivity extends PreferenceActivity {
         findPreference("difficulty").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-
+                Log.d("preference", "difficulty changed");
                 return true;
             }
         });

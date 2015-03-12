@@ -19,6 +19,7 @@ public class PuzzleManager {
     private int emptyId;
     private int[] gameboard;
     private static PuzzleManager instance = null;
+    private int difficulty = 4; //default to difficulty of four, or medium
 
     // make this different difficult levels later on?
     private PuzzleManager() {
@@ -44,8 +45,14 @@ public class PuzzleManager {
     public int[] getGameboard() {
         return gameboard;
     }
-    public void setGameboard(int[] gameboard) {
-        this.gameboard = gameboard;
+    public void setDifficulty(int difficulty) { this.difficulty = difficulty; }
+    public int getDifficulty() { return difficulty; }
+    public void setGameboard(int difficulty) {
+        int[] newGameboard = new int[difficulty * difficulty];
+        for (int i = 0; i < (difficulty * difficulty); i++) {
+            newGameboard[i] = i;
+        }
+        gameboard = newGameboard;
     }
 
     public void swap(int index, int empty) {
@@ -57,7 +64,7 @@ public class PuzzleManager {
     }
 
     public void resetGameboard() {
-        gameboard = new int[] {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
+        setGameboard(difficulty);
     }
     public boolean hasWon() {
         Log.d("GAMEBOARD HAS WON", Arrays.toString(gameboard));

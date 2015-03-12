@@ -33,7 +33,7 @@ public class MainActivity extends Activity {
         mpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "You're playing multiplayer, have fun!", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MainActivity.this, "You're playing multiplayer, have fun!", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(MainActivity.this, MultiPlayerSetupActivity.class);
                 startActivity(intent);
             }

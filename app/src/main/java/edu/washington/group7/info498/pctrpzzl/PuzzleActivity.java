@@ -116,7 +116,18 @@ public class PuzzleActivity extends Activity {
                 // initialized some important stuff
                 ArrayList<Bitmap> images;
                 final PuzzleManager pm = PuzzleManager.getInstance();
-                images = splitImage(imageView, 16);
+                final SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(PuzzleActivity.this);
+
+                String stringDifficulty = sharedPrefs.getString("difficulty", "4");
+                // because Zach set this and I'm too lazy to change the setting itself
+                if (stringDifficulty.equalsIgnoreCase("easy")) {
+                    stringDifficulty = "4";
+                }
+                final int difficulty = Integer.parseInt(stringDifficulty);
+                pm.setDifficulty(difficulty);
+                pm.setEmptyId((difficulty * difficulty) - 1);
+                pm.setGameboard(difficulty);
+                images = splitImage(imageView, difficulty * difficulty);
 
                 // place images in GridView and shuffle them
                 GridView grid = (GridView) findViewById(R.id.gridView);
@@ -133,8 +144,8 @@ public class PuzzleActivity extends Activity {
                         // if left, right, up or down (assuming a tile has a tile in that position)
                         if ((position == pm.getEmptyId() - 1) ||
                                 (position == pm.getEmptyId() + 1) ||
-                                (position == pm.getEmptyId() - 4) ||
-                                (position == pm.getEmptyId() + 4)) {
+                                (position == pm.getEmptyId() - difficulty) ||
+                                (position == pm.getEmptyId() + difficulty)) {
                             clicked();
                             movesView.setText("Moves: " + index);
                             // swap the tiles
@@ -159,20 +170,14 @@ public class PuzzleActivity extends Activity {
 
                                 AlertDialog.Builder builder = new AlertDialog.Builder(PuzzleActivity.this);
                                 long elapsedMillis = SystemClock.elapsedRealtime() - timer.getBase();
-                                String message =
-                                        "It took you " +
-                                        String.format("%d min, %d sec",
-                                            TimeUnit.MILLISECONDS.toMinutes(elapsedMillis),
-                                            TimeUnit.MILLISECONDS.toSeconds(elapsedMillis) -
-                                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(elapsedMillis))) +
-                                            " and " + index + " moves to solve this puzzle!";
+                                String message = "It took you " + timer.getText().toString() + " and " + index + " moves to solve this puzzle!";
                                 builder.setMessage(message)
                                         .setTitle("You win!");
 
                                 builder.setPositiveButton("Take me home", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
                                         Intent intent = new Intent(PuzzleActivity.this, MainActivity.class);
-                                        PuzzleManager.getInstance().setEmptyId(15);
+                                        PuzzleManager.getInstance().setEmptyId(difficulty - 1);
                                         PuzzleManager.getInstance().resetGameboard();
                                         startActivity(intent);
                                     }
@@ -181,7 +186,7 @@ public class PuzzleActivity extends Activity {
                                     public void onClick(DialogInterface dialog, int id) {
                                         // User cancelled the dialog
                                         Intent intent = new Intent(PuzzleActivity.this, PictureChoiceActivity.class);
-                                        PuzzleManager.getInstance().setEmptyId(15);
+                                        PuzzleManager.getInstance().setEmptyId(difficulty - 1);
                                         PuzzleManager.getInstance().resetGameboard();
                                         startActivity(intent);
                                     }
@@ -240,7 +245,7 @@ public class PuzzleActivity extends Activity {
     @Override
     protected void onDestroy() {
         // force game to reset if you exit the activity
-        PuzzleManager.getInstance().setEmptyId(15);
+        PuzzleManager.getInstance().setEmptyId(PuzzleManager.getInstance().getDifficulty() - 1);
         PuzzleManager.getInstance().resetGameboard();
         super.onDestroy();
     }
@@ -312,14 +317,15 @@ public class PuzzleActivity extends Activity {
             ArrayList<Integer> moves = new ArrayList<Integer>();
             int empty = pm.getEmptyId();
             int length = pm.getGameboard().length;
+            int difficulty = pm.getDifficulty();
 
             // left, right, up, down
-            int[] possible = {empty - 1, empty + 1,empty - 4, empty + 4};
+            int[] possible = {empty - 1, empty + 1,empty - difficulty, empty + difficulty};
 
 
             for (int choice : possible) {
-                boolean sameRow = (choice / 4) == (empty / 4);
-                boolean sameCol = (choice % 4) == (empty % 4);
+                boolean sameRow = (choice / difficulty) == (empty / difficulty);
+                boolean sameCol = (choice % difficulty) == (empty % difficulty);
 
                 // if not bigger or smaller than gameboard
                 if (choice <= length - 1 && choice >= 0) {
